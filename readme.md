@@ -1,5 +1,4 @@
-About
-=====
+# About
 
 Chess reinforcement learning by [AlphaGo Zero](https://deepmind.com/blog/alphago-zero-learning-scratch/) methods.
 
@@ -9,55 +8,37 @@ This project is based in two main resources:
 
 Note: <b>This project is still under construction!!</b>
 
-News
-----
+## Environment
 
-DeepMind just released today a new version of thr AlphaGo Zero idea (named now AlphaZero) where they mastering chess from scratch: 
-https://arxiv.org/pdf/1712.01815.pdf. In fact, in chess AlphaZero outperformed Stockfish after just 4 hours (300k steps) Wow!
+* Python 3.5
+* tensorflow-gpu
+* Keras
 
-There are new ideas we have to take into account for this project. It seems, for exmaple, that two planes for feeding the input model are not enough.
+### Setup
 
-Environment
------------
+#### install libraries
+```bash
+pip install -r requirements.txt
+```
 
-* Python 3.6.3
-* tensorflow-gpu: 1.3.0
-* Keras: 2.0.8
-
-Hardware Support from the company Starshot Software: http://www.starshotsoftware.com/
-=====
-![Starshot Software](http://www.starshotsoftware.com/wp-content/uploads/2016/10/starshot_logo_400.png)
-
-The company where I currently work gave me recently hardware support, offering an Microsoft Azure server with a GPU NVIDIA Tesla M60. I hope to get really good results now that I've got this big machine avaiable. 
-
-### First "good" results
-
-Using the new supervised learning step I created, I've been able to train a model to the point that seems to be learning the openings of chess. Also it seems the model starts to avoid losing naively pieces.
-
-Here you can see an example of a game played for me against this model (AI plays black):
- 
-![partida1](https://user-images.githubusercontent.com/17341905/33597844-ea53c8ae-d9a0-11e7-8564-4b9b0f35a221.gif)
-
-This model plays in this way after only 5 epoch iterations of the 'opt' worker, the 'eval' worker changed 4 times the best model (4 of 5). At this moment the loss of the 'opt' worker is 5.1 (and still seems to be converging very well).
-
-As I have not GPU, I had to evaluate ('eval') using only "self.simulation_num_per_move = 10" and only 10 files of play data for the 'opt' worker. I'm pretty sure if anybody is able to run in a good GPU with a more powerful configuration the results after complete convergence would be really good.
-
-### New Supervised Learning Training Pipeline
-
-I've done a supervised learning new pipeline step (to use those human games files "PGN" we can find in internet as play-data generator).
-This SL step was also used in the first and original version of AlphaGo and maybe chess is a some complex game that we have to pre-train first the policy model before starting the self-play process (i.e., maybe chess is too much complicated for a self training alone).
-
-To use the new SL process is so simple as running in the beginning instead of the worker "self" the new worker "sl".
-Once the model converges enough with SL play-data we just stop the worker "sl" and start the worker "self" so the model will start improving now due to self-play data.
-
-If you want to use this new SL step you will have to download from internet big PGN files (chess files) and paste them into the "data/play_data" folder.
-
-Supervised Learning
--------------------
+If you want use GPU,
 
 ```bash
-python src/chess_zero/run.py sl
+pip install tensorflow-gpu
 ```
+
+#### set environment variables (if necessary)
+Create `.env` file and write this.
+
+```text:.env
+KERAS_BACKEND=tensorflow
+```
+## News
+
+DeepMind just released today a new version of thr AlphaGo Zero idea (named now AlphaZero) where they mastering chess from scratch: 
+https://arxiv.org/pdf/1712.01815.pdf. In fact, AlphaZero outperformed Stockfish after just 4 hours (300k steps).
+
+There are new ideas we have to take into account for this project. It seems, for example, that two planes for feeding the input model are not enough.
 
 ### New Distributed Training Pipeline
 
@@ -73,10 +54,22 @@ python src/chess_zero/run.py opt --type distributed
 python src/chess_zero/run.py eval --type distributed
 ```
 
-Modules
--------
+# System Overview
+## Supervised Learning
 
-### Reinforcement Learning
+This allows the system to use data from pgn files to pretrain weights before gradient descent.
+```bash
+python src/chess_zero/run.py sl
+```
+I've done a supervised learning new pipeline step (to use those human games files "PGN" we can find in internet as play-data generator).
+This SL step was also used in the first and original version of AlphaGo and maybe chess is a some complex game that we have to pre-train first the policy model before starting the self-play process (i.e., maybe chess is too much complicated for a self training alone).
+
+To use the new SL process is so simple as running in the beginning instead of the worker "self" the new worker "sl".
+Once the model converges enough with SL play-data we just stop the worker "sl" and start the worker "self" so the model will start improving now due to self-play data.
+
+If you want to use this new SL step you will have to download from internet big PGN files (chess files) and paste them into the "data/play_data" folder.
+
+## Reinforcement Learning
 
 This AlphaGo Zero implementation consists of three worker `self`, `opt` and `eval`.
 
@@ -84,14 +77,13 @@ This AlphaGo Zero implementation consists of three worker `self`, `opt` and `eva
 * `opt` is Trainer to train model, and generate next-generation models.
 * `eval` is Evaluator to evaluate whether the next-generation model is better than BestModel. If better, replace BestModel.
 
-### Evaluation
+## Evaluation
 
-For evaluation, you can play chess with the BestModel.
+For evaluation, you can play chess with the BestModel. Command prompt move input with ascii visualization. Type 'exit' to leave game.
 
 * `play_gui` is Play Game vs BestModel using ASCII character encoding.
 
-Data
------
+## Data
 
 * `data/model/model_best_*`: BestModel.
 * `data/model/next_generation/*`: next-generation models.
@@ -100,38 +92,13 @@ Data
   
 If you want to train the model from the beginning, delete the above directories.
 
-How to use
-==========
+# How to use
 
-Setup
--------
-### install libraries
-```bash
-pip install -r requirements.txt
-```
-
-If you want use GPU,
-
-```bash
-pip install tensorflow-gpu
-```
-
-### set environment variables
-Create `.env` file and write this.
-
-```text:.env
-KERAS_BACKEND=tensorflow
-```
-
-
-Basic Usages
-------------
+## Basic Usage
 
 For training model, execute `Self-Play`, `Trainer` and `Evaluator`. 
 
-
-Self-Play
---------
+### Self-Play
 
 ```bash
 python src/chess_zero/run.py self
@@ -140,12 +107,11 @@ python src/chess_zero/run.py self
 When executed, Self-Play will start using BestModel.
 If the BestModel does not exist, new random model will be created and become BestModel.
 
-### options
+#### options
 * `--new`: create new BestModel
 * `--type mini`: use mini config for testing, (see `src/chess_zero/configs/mini.py`)
 
-Trainer
--------
+### Trainer
 
 ```bash
 python src/chess_zero/run.py opt
@@ -155,12 +121,11 @@ When executed, Training will start.
 A base model will be loaded from latest saved next-generation model. If not existed, BestModel is used.
 Trained model will be saved every 2000 steps(mini-batch) after epoch. 
 
-### options
+#### options
 * `--type mini`: use mini config for testing, (see `src/chess_zero/configs/mini.py`)
 * `--total-step`: specify total step(mini-batch) numbers. The total step affects learning rate of training. 
 
-Evaluator
----------
+### Evaluator
 
 ```bash
 python src/chess_zero/run.py eval
@@ -170,39 +135,18 @@ When executed, Evaluation will start.
 It evaluates BestModel and the latest next-generation model by playing about 200 games.
 If next-generation model wins, it becomes BestModel. 
 
-### options
+#### options
 * `--type mini`: use mini config for testing, (see `src/chess_zero/configs/mini.py`)
 
-Play Game
----------
+### Play Game
 
 ```bash
 python src/chess_zero/run.py play_gui
 ```
 
-
 When executed, ordinary chess board will be displayed in ASCII code and you can play against BestModel.
 
-
-Tips and Memo
-====
-
-GPU Memory
-----------
-
-Usually the lack of memory cause warnings, not error.
-If error happens, try to change `per_process_gpu_memory_fraction` in `src/worker/{evaluate.py,optimize.py,self_play.py}`,
-
-```python
-tf_util.set_session_config(per_process_gpu_memory_fraction=0.2)
-```
-
-Less batch_size will reduce memory usage of `opt`.
-Try to change `TrainerConfig#batch_size` in `NormalConfig`.
-
-
-Model Performance
--------
+# Model Performance (unfinished)
 
 The following table is records of the best models.
 
@@ -210,3 +154,14 @@ The following table is records of the best models.
 |-----|-----|-----|-----|
 |1|-|-|　|
 
+## First "good" results
+
+Using the new supervised learning step I created, I've been able to train a model to the point that seems to be learning the openings of chess. Also it seems the model starts to avoid losing naively pieces.
+
+Here you can see an example of a game played for me against this model (AI plays black):
+ 
+![partida1](https://user-images.githubusercontent.com/17341905/33597844-ea53c8ae-d9a0-11e7-8564-4b9b0f35a221.gif)
+
+This model plays in this way after only 5 epoch iterations of the 'opt' worker, the 'eval' worker changed 4 times the best model (4 of 5). At this moment the loss of the 'opt' worker is 5.1 (and still seems to be converging very well).
+
+As I have not GPU, I had to evaluate ('eval') using only "self.simulation_num_per_move = 10" and only 10 files of play data for the 'opt' worker. I'm pretty sure if anybody is able to run in a good GPU with a more powerful configuration the results after complete convergence would be really good.
