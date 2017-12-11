@@ -45,8 +45,11 @@ class SelfPlayWorker:
             start_time = time()
             env = self.start_game(idx)
             end_time = time()
-            logger.debug("game {idx} time={end_time - start_time} sec, "
-                         "turn={int(env.turn/2)}:{env.observation} - Winner:{env.winner} - by resignation?:{env.resigned}")
+        #    logger.debug("game %d time=%d sec, ", idx, (end_time-start_time),
+        #                 "turn=%d:%s - Winner:%s - by resignation?:%s", int(env.turn/2), env.observation, env.winner, env.resigned)
+            logger.debug("game %d time=%d sec, ", idx, (end_time-start_time))
+            logger.debug("turn=%d:%s - Winner:%s - by resignation?:%s", int(env.turn/2), env.observation, env.winner, env.resigned)
+
             if (idx % self.config.play_data.nb_game_in_file) == 0:
                 reload_best_model_weight_if_changed(self.model)
             idx += 1
