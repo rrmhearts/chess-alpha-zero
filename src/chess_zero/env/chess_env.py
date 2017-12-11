@@ -39,7 +39,7 @@ class ChessEnv:
         :param int|None action, None is resign
         :return:
         """
-        if action is None:
+        if action is None or action == 'exit':
             self._resigned()
             return self.board, {}
 

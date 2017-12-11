@@ -35,7 +35,7 @@ class PlayWithHuman:
 
         self.last_history = self.ai.ask_thought_about(env.observation)
         self.last_evaluation = self.last_history.values[self.last_history.action]
-        logger.debug(f"Evaluation by AI = {self.last_evaluation}")
+        logger.debug("Evaluation by AI = {self.last_evaluation}")
 
         return action
 
@@ -43,7 +43,9 @@ class PlayWithHuman:
         while True:
             try:
                 move = input('\nEnter your move in UCI format (a1a2, b2b6, ...): ')
-                if chess.Move.from_uci(move) in env.board.legal_moves:
+                if move == 'exit':
+                    return 'exit'
+                elif chess.Move.from_uci(move) in env.board.legal_moves:
                     return move
                 else:
                     print("That is NOT a valid move :(.")

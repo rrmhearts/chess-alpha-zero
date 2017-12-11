@@ -55,7 +55,7 @@ class Config:
         elif config_type == "distributed":
             import chess_zero.configs.distributed as c
         else:
-            raise RuntimeError(f"unknown config_type: {config_type}")
+            raise RuntimeError("unknown config_type: {config_type}")
         self.model = c.ModelConfig()
         self.play = c.PlayConfig()
         self.play_data = c.PlayDataConfig()

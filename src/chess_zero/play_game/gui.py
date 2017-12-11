@@ -20,6 +20,8 @@ def start(config: Config):
     while not env.done:
         if (env.board.turn == chess.BLACK) == human_is_black:
             action = chess_model.move_by_human(env)
+            if action == 'exit':
+                env.done = True
             print("You move to: " + action)
         else:
             action = chess_model.move_by_ai(env)
