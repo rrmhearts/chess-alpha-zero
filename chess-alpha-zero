@@ -1,0 +1,2 @@
+#!/bin/sh
+LD_PRELOAD=/usr/lib/libjemalloc.so.2 python src/chess_zero/run.py $@

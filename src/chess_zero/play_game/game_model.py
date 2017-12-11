@@ -5,6 +5,7 @@ from chess_zero.agent.player_chess import ChessPlayer
 from chess_zero.config import Config
 from chess_zero.lib.model_helper import load_best_model_weight
 import chess
+import sys
 
 logger = getLogger(__name__)
 
@@ -43,11 +44,19 @@ class PlayWithHuman:
         while True:
             try:
                 move = input('\nEnter your move in UCI format (a1a2, b2b6, ...): ')
-                if move == 'exit':
+                if "quit" in move:
+                    print("OK. Exiting...")
+                    sys.exit(0)
+                elif move == 'exit':
                     return 'exit'
                 elif chess.Move.from_uci(move) in env.board.legal_moves:
                     return move
                 else:
-                    print("That is NOT a valid move :(.")
+                    self.invalid_move()
             except:
-                print("That is NOT a valid move :(.")
+                self.invalid_move()
+
+    @staticmethod
+    def invalid_move():
+        print("That is NOT a valid move :(.")
+        print("To quit, enter 'quit'.")
